@@ -77,15 +77,17 @@ var generateRandomTokenAsync = Promise.promisify(generateRandomToken); // TODO
 // (3) Asyncronous file manipulation
 var readFileAndMakeItFunny = function (filePath, callback) {
  fs.readFile(filePath, 'utf8', function(err, file) {
-   if (err) return callback(err);
-   
+   if (err) {
+    return callback(err);
+   } else {
    var funnyFile = file.split('\n')
      .map(function(line) {
        return line + ' lol';
      })
      .join('\n')
 
-   callback(funnyFile);
+    callback(err, funnyFile);
+    }
  });
 };
 

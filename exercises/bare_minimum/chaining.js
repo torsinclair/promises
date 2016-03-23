@@ -104,8 +104,32 @@ var getGitHubProfileAsync = require('./promisification').getGitHubProfileAsync
 
 
 
-var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath) {
+var fetchProfileAndWriteToFile = function(readFilePath, writeFilePath, callback) {
+
+  var writeFileAsync = Promise.promisify(fs.writeFile);
   // TODO
+  return new Promise(function(resolve, reject) {
+    pluckFirstLineFromFileAsync(readFilePath)
+    .then(function(username){
+      getGitHubProfileAsync(username)
+      .then(function(profile){
+        resolve(writeFileAsync(writeFilePath, JSON.stringify(profile)));
+      })
+        // .then(function(profile) {
+        //   console.log('All done!');
+        //   callback(profile);
+        // })
+        // .catch(function(err){
+        //   console.log('Oops, caught an error: ', err.message);
+        // })
+      .catch(function(err){
+        console.log('Oops, caught an error: ', err.message);
+      })
+    })
+    .catch(function(err) {
+      console.log('Oops, caught an error: ', err.message);
+    })
+  });
 };
 
 module.exports = {
